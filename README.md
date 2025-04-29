@@ -6,6 +6,14 @@ An open-source Memory Control Protocol (MCP) server powered by [mem0](https://gi
 
 This project aims to implement an MCP server using the mem0 library as the backend memory engine. The goal is to enable Windsurf and other clients to interact with a flexible, high-performance memory layer via standard MCP interfaces.
 
+## About Model Context Protocol (MCP)
+
+This project implements the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction), an open standard for memory and context management in AI systems. MCP defines how clients and servers communicate to store, retrieve, and manage contextual information for large language models and related applications.
+
+By supporting MCP, this server enables seamless interoperability between memory backends (like mem0) and clients (such as Windsurf), making it easy to build, extend, and integrate memory solutions across the AI ecosystem.
+
+Learn more about MCP at the [official introduction](https://modelcontextprotocol.io/introduction).
+
 ## Features
 - **Open-source**: MIT-licensed for community use and contribution.
 - **MCP Protocol**: Implements the Memory Control Protocol for interoperability.
