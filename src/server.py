@@ -8,6 +8,19 @@ from fastapi import FastAPI
 
 app = FastAPI(title="Mem0 MCP Server")
 
+# Root endpoint for friendlier UX
+@app.get("/")
+def root():
+    """Welcome message and endpoint listing."""
+    return {
+        "message": "Welcome to the Mem0 MCP Server!",
+        "endpoints": [
+            "/health",
+            "/memory (POST)",
+            "/memory/{memory_id} (GET)"
+        ]
+    }
+
 @app.get("/health")
 def health_check():
     """Health check endpoint for server monitoring."""
