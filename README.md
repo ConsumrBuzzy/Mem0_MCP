@@ -67,4 +67,16 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
+## Agent/AI Integration & Usage Example
+
+To interact with the MCP server programmatically (for example, from an agentic AI or LLM), use the provided example Python client:
+
+```bash
+python examples/python_client.py
+```
+
+This script demonstrates how to store, retrieve, update, delete, and search for memories using the MCP API. You can adapt it for your own AI agent or use it as a reference for integrating with Cascade, Windsurf, or other systems.
+
+See [examples/python_client.py](examples/python_client.py) for details.
+
 *This project is in active development. Stay tuned for updates!*
