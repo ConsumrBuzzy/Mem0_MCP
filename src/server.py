@@ -27,11 +27,17 @@ def health_check():
     return {"status": "ok"}
 
 # Step 1: Import mem0ai and initialize a simple mem0 client
-try:
-    import mem0ai
-    mem0_client = mem0ai.Client()
-except ImportError:
-    mem0_client = None  # mem0ai not installed
+import os
+from mem0 import MemoryClient
+
+# Use MEM0_API_KEY environment variable for security
+MEM0_API_KEY = os.getenv("MEM0_API_KEY")
+if not MEM0_API_KEY:
+    mem0_client = None
+    print("[ERROR] MEM0_API_KEY environment variable not set. Set it to your mem0 API key.")
+else:
+    # Correct usage per https://docs.mem0.ai/quickstart
+    mem0_client = MemoryClient(api_key=MEM0_API_KEY)
 
 # Step 2: Add /memory endpoints for storing, retrieving, updating, and deleting a memory
 from fastapi import Request
@@ -39,18 +45,21 @@ from fastapi.responses import JSONResponse
 
 @app.post("/memory")
 async def store_memory(request: Request):
-    """Store a memory using mem0ai client."""
+    """Store a memory using mem0 MemoryClient.
+    Expects a JSON payload with:
+      - messages: list of dicts (required)
+      - user_id: string (optional)
+    """
     try:
         if not mem0_client:
-            return JSONResponse(status_code=500, content={"error": "mem0ai not installed"})
+            return JSONResponse(status_code=500, content={"error": "mem0 MemoryClient not initialized"})
         data = await request.json()
-        # For demonstration, we assume the payload has a 'text' field
-        text = data.get("text")
-        if not text:
-            return JSONResponse(status_code=400, content={"error": "Missing 'text' field"})
-        # Store memory (this is a placeholder, actual mem0 usage may differ)
-        # Correct usage per https://docs.mem0.ai/quickstart
-        memory_id = mem0_client.add(text=text)
+        messages = data.get("messages")
+        user_id = data.get("user_id")
+        if not messages or not isinstance(messages, list):
+            return JSONResponse(status_code=400, content={"error": "Missing or invalid 'messages' field (must be a list)"})
+        # Store memory as per https://docs.mem0.ai/quickstart and your example
+        memory_id = mem0_client.add(messages, user_id=user_id)
         return {"status": "stored", "id": memory_id}
     except Exception as e:
         # Log the full exception to the console for debugging
