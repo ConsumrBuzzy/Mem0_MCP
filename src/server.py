@@ -40,16 +40,24 @@ from fastapi.responses import JSONResponse
 @app.post("/memory")
 async def store_memory(request: Request):
     """Store a memory using mem0ai client."""
-    if not mem0_client:
-        return JSONResponse(status_code=500, content={"error": "mem0ai not installed"})
-    data = await request.json()
-    # For demonstration, we assume the payload has a 'text' field
-    text = data.get("text")
-    if not text:
-        return JSONResponse(status_code=400, content={"error": "Missing 'text' field"})
-    # Store memory (this is a placeholder, actual mem0 usage may differ)
-    memory_id = mem0_client.add(text)
-    return {"status": "stored", "id": memory_id}
+    try:
+        if not mem0_client:
+            return JSONResponse(status_code=500, content={"error": "mem0ai not installed"})
+        data = await request.json()
+        # For demonstration, we assume the payload has a 'text' field
+        text = data.get("text")
+        if not text:
+            return JSONResponse(status_code=400, content={"error": "Missing 'text' field"})
+        # Store memory (this is a placeholder, actual mem0 usage may differ)
+        memory_id = mem0_client.add(text)
+        return {"status": "stored", "id": memory_id}
+    except Exception as e:
+        # Log the full exception to the console for debugging
+        import traceback
+        print("[ERROR] Exception in /memory POST endpoint:")
+        traceback.print_exc()
+        # Return the error message in the response (for debugging only)
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.get("/memory/{memory_id}")
 async def get_memory(memory_id: str):
