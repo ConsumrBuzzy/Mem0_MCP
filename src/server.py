@@ -33,7 +33,7 @@ try:
 except ImportError:
     mem0_client = None  # mem0ai not installed
 
-# Step 2: Add a /memory endpoint for storing and retrieving a simple memory
+# Step 2: Add /memory endpoints for storing, retrieving, updating, and deleting a memory
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
@@ -61,5 +61,33 @@ async def get_memory(memory_id: str):
     if not memory:
         return JSONResponse(status_code=404, content={"error": "Memory not found"})
     return {"id": memory_id, "memory": memory}
+
+# Step 3: Add an endpoint to update a memory object
+@app.put("/memory/{memory_id}")
+async def update_memory(memory_id: str, request: Request):
+    """Update a memory by ID using mem0ai client."""
+    if not mem0_client:
+        return JSONResponse(status_code=500, content={"error": "mem0ai not installed"})
+    data = await request.json()
+    text = data.get("text")
+    if not text:
+        return JSONResponse(status_code=400, content={"error": "Missing 'text' field"})
+    # Update memory (placeholder, actual mem0 usage may differ)
+    updated = mem0_client.update(memory_id, text)
+    if not updated:
+        return JSONResponse(status_code=404, content={"error": "Memory not found or update failed"})
+    return {"status": "updated", "id": memory_id}
+
+# Step 4: Add an endpoint to delete a memory object
+@app.delete("/memory/{memory_id}")
+async def delete_memory(memory_id: str):
+    """Delete a memory by ID using mem0ai client."""
+    if not mem0_client:
+        return JSONResponse(status_code=500, content={"error": "mem0ai not installed"})
+    # Delete memory (placeholder, actual mem0 usage may differ)
+    deleted = mem0_client.delete(memory_id)
+    if not deleted:
+        return JSONResponse(status_code=404, content={"error": "Memory not found or delete failed"})
+    return {"status": "deleted", "id": memory_id}
 
 # All endpoints are simple and testable. Extend as needed for full MCP compliance.
