@@ -63,9 +63,10 @@ if __name__ == "__main__":
     print("Storing memory...")
     store_result = store_memory("example memory for MCP")
     print("Store result:", store_result)
-    memory_id = store_result.get("id")
 
-    if memory_id:
+    # Only proceed if store_result is valid and contains an 'id'
+    if store_result and "id" in store_result:
+        memory_id = store_result["id"]
         print("Retrieving memory...")
         print(get_memory(memory_id))
 
@@ -77,3 +78,6 @@ if __name__ == "__main__":
 
         print("Deleting memory...")
         print(delete_memory(memory_id))
+    else:
+        print("Failed to store memory. Aborting further operations.")
+        exit(1)
