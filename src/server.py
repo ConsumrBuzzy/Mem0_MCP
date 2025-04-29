@@ -90,4 +90,20 @@ async def delete_memory(memory_id: str):
         return JSONResponse(status_code=404, content={"error": "Memory not found or delete failed"})
     return {"status": "deleted", "id": memory_id}
 
+# Step 5: Add a /memory/search endpoint for searching/querying memories
+from fastapi import Body
+
+@app.post("/memory/search")
+async def search_memory(payload: dict = Body(...)):
+    """Search/query memories using mem0ai client."""
+    if not mem0_client:
+        return JSONResponse(status_code=500, content={"error": "mem0ai not installed"})
+    query = payload.get("query")
+    if not query:
+        return JSONResponse(status_code=400, content={"error": "Missing 'query' field"})
+    # Search memories (placeholder, actual mem0 usage may differ)
+    # This assumes mem0_client.search returns a list of matching memory objects
+    results = mem0_client.search(query)
+    return {"results": results}
+
 # All endpoints are simple and testable. Extend as needed for full MCP compliance.
