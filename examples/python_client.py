@@ -9,9 +9,17 @@ import requests
 from requests.exceptions import RequestException
 
 # Store a memory with graceful error handling
-def store_memory(text):
+def store_memory(messages, user_id=None):
+    """
+    Store a memory by sending a list of messages and an optional user_id.
+    messages: list of dicts (required by server)
+    user_id: string (optional)
+    """
     try:
-        resp = requests.post(f"{BASE_URL}/memory", json={"text": text}, timeout=5)
+        payload = {"messages": messages}
+        if user_id:
+            payload["user_id"] = user_id
+        resp = requests.post(f"{BASE_URL}/memory", json=payload, timeout=5)
         resp.raise_for_status()
         return resp.json()
     except RequestException as e:
@@ -61,23 +69,22 @@ def search_memory(query):
 if __name__ == "__main__":
     # Example usage
     print("Storing memory...")
-    store_result = store_memory("example memory for MCP")
-    print("Store result:", store_result)
-
-    # Only proceed if store_result is valid and contains an 'id'
-    if store_result and "id" in store_result:
-        memory_id = store_result["id"]
-        print("Retrieving memory...")
-        print(get_memory(memory_id))
-
-        print("Updating memory...")
-        print(update_memory(memory_id, "updated memory text"))
-
-        print("Searching for memory...")
-        print(search_memory("updated"))
-
-        print("Deleting memory...")
-        print(delete_memory(memory_id))
-    else:
+    messages = [
+        {"role": "user", "content": "Hi, I'm Alex. I'm a vegetarian and I'm allergic to nuts."},
+        {"role": "assistant", "content": "Hello Alex! I've noted that you're a vegetarian and have a nut allergy. I'll keep this in mind for any food-related recommendations or discussions."}
+    ]
+    store_result = store_memory(messages, user_id="alex")
+    print(f"Store result: {store_result}")
+    if not store_result or not store_result.get("id"):
         print("Failed to store memory. Aborting further operations.")
-        exit(1)
+    else:
+        memory_id = store_result["id"]
+        print(f"Retrieving memory {memory_id}...")
+        get_result = get_memory(memory_id)
+        print(f"Get result: {get_result}")
+        print(f"Updating memory {memory_id}...")
+        update_result = update_memory(memory_id, "updated memory text")
+        print(f"Update result: {update_result}")
+        print(f"Deleting memory {memory_id}...")
+        delete_result = delete_memory(memory_id)
+        print(f"Delete result: {delete_result}")
