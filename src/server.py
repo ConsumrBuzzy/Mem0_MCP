@@ -49,7 +49,8 @@ async def store_memory(request: Request):
         if not text:
             return JSONResponse(status_code=400, content={"error": "Missing 'text' field"})
         # Store memory (this is a placeholder, actual mem0 usage may differ)
-        memory_id = mem0_client.add(text)
+        # Correct usage per https://docs.mem0.ai/quickstart
+memory_id = mem0_client.add(text=text)
         return {"status": "stored", "id": memory_id}
     except Exception as e:
         # Log the full exception to the console for debugging
@@ -65,7 +66,8 @@ async def get_memory(memory_id: str):
     if not mem0_client:
         return JSONResponse(status_code=500, content={"error": "mem0ai not installed"})
     # Retrieve memory (this is a placeholder, actual mem0 usage may differ)
-    memory = mem0_client.get(memory_id)
+    # Correct usage per https://docs.mem0.ai/quickstart
+memory = mem0_client.get(id=memory_id)
     if not memory:
         return JSONResponse(status_code=404, content={"error": "Memory not found"})
     return {"id": memory_id, "memory": memory}
@@ -81,7 +83,8 @@ async def update_memory(memory_id: str, request: Request):
     if not text:
         return JSONResponse(status_code=400, content={"error": "Missing 'text' field"})
     # Update memory (placeholder, actual mem0 usage may differ)
-    updated = mem0_client.update(memory_id, text)
+    # Correct usage per https://docs.mem0.ai/quickstart
+updated = mem0_client.update(id=memory_id, text=text)
     if not updated:
         return JSONResponse(status_code=404, content={"error": "Memory not found or update failed"})
     return {"status": "updated", "id": memory_id}
@@ -93,7 +96,8 @@ async def delete_memory(memory_id: str):
     if not mem0_client:
         return JSONResponse(status_code=500, content={"error": "mem0ai not installed"})
     # Delete memory (placeholder, actual mem0 usage may differ)
-    deleted = mem0_client.delete(memory_id)
+    # Correct usage per https://docs.mem0.ai/quickstart
+deleted = mem0_client.delete(id=memory_id)
     if not deleted:
         return JSONResponse(status_code=404, content={"error": "Memory not found or delete failed"})
     return {"status": "deleted", "id": memory_id}
