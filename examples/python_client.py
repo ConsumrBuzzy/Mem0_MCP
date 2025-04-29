@@ -71,14 +71,6 @@ def search_memory(query, user_id=None):
     except RequestException as e:
         print(f"[ERROR] Failed to search memories: {e}")
         return None
-def search_memory(query):
-    try:
-        resp = requests.post(f"{BASE_URL}/memory/search", json={"query": query}, timeout=5)
-        resp.raise_for_status()
-        return resp.json()
-    except RequestException as e:
-        print(f"[ERROR] Failed to search memories: {e}")
-        return None
 
 if __name__ == "__main__":
     # Example usage

@@ -59,7 +59,15 @@ async def store_memory(request: Request):
         if not messages or not isinstance(messages, list):
             return JSONResponse(status_code=400, content={"error": "Missing or invalid 'messages' field (must be a list)"})
         # Store memory as per https://docs.mem0.ai/quickstart and your example
-        memory_id = mem0_client.add(messages, user_id=user_id)
+        memory_response = mem0_client.add(messages, user_id=user_id)
+        # Extract the ID from the response structure (assume mem0 returns {'results': [{'id': ...}]})
+        memory_id = None
+        if memory_response and isinstance(memory_response, dict):
+            results = memory_response.get('results', [])
+            if results and isinstance(results, list) and 'id' in results[0]:
+                memory_id = results[0]['id']
+        if not memory_id:
+            return JSONResponse(status_code=500, content={"error": "Failed to extract memory ID from mem0 response", "mem0_response": memory_response})
         return {"status": "stored", "id": memory_id}
     except Exception as e:
         # Log the full exception to the console for debugging
