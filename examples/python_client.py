@@ -5,31 +5,58 @@ Demonstrates storing, retrieving, updating, deleting, and searching for memories
 import requests
 
 BASE_URL = "http://localhost:8000"  # Change if server is remote
+import requests
+from requests.exceptions import RequestException
 
-# Store a memory
+# Store a memory with graceful error handling
 def store_memory(text):
-    resp = requests.post(f"{BASE_URL}/memory", json={"text": text})
-    return resp.json()
+    try:
+        resp = requests.post(f"{BASE_URL}/memory", json={"text": text}, timeout=5)
+        resp.raise_for_status()
+        return resp.json()
+    except RequestException as e:
+        print(f"[ERROR] Failed to store memory: {e}")
+        return None
 
-# Retrieve a memory by ID
+# Retrieve a memory by ID with graceful error handling
 def get_memory(memory_id):
-    resp = requests.get(f"{BASE_URL}/memory/{memory_id}")
-    return resp.json()
+    try:
+        resp = requests.get(f"{BASE_URL}/memory/{memory_id}", timeout=5)
+        resp.raise_for_status()
+        return resp.json()
+    except RequestException as e:
+        print(f"[ERROR] Failed to retrieve memory {memory_id}: {e}")
+        return None
 
-# Update a memory by ID
+# Update a memory by ID with graceful error handling
 def update_memory(memory_id, text):
-    resp = requests.put(f"{BASE_URL}/memory/{memory_id}", json={"text": text})
-    return resp.json()
+    try:
+        resp = requests.put(f"{BASE_URL}/memory/{memory_id}", json={"text": text}, timeout=5)
+        resp.raise_for_status()
+        return resp.json()
+    except RequestException as e:
+        print(f"[ERROR] Failed to update memory {memory_id}: {e}")
+        return None
 
-# Delete a memory by ID
+# Delete a memory by ID with graceful error handling
 def delete_memory(memory_id):
-    resp = requests.delete(f"{BASE_URL}/memory/{memory_id}")
-    return resp.json()
+    try:
+        resp = requests.delete(f"{BASE_URL}/memory/{memory_id}", timeout=5)
+        resp.raise_for_status()
+        return resp.json()
+    except RequestException as e:
+        print(f"[ERROR] Failed to delete memory {memory_id}: {e}")
+        return None
 
-# Search for memories
+# Search for memories with graceful error handling
 def search_memory(query):
-    resp = requests.post(f"{BASE_URL}/memory/search", json={"query": query})
-    return resp.json()
+    try:
+        resp = requests.post(f"{BASE_URL}/memory/search", json={"query": query}, timeout=5)
+        resp.raise_for_status()
+        return resp.json()
+    except RequestException as e:
+        print(f"[ERROR] Failed to search memories: {e}")
+        return None
 
 if __name__ == "__main__":
     # Example usage
