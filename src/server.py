@@ -119,15 +119,26 @@ from fastapi import Body
 
 @app.post("/memory/search")
 async def search_memory(payload: dict = Body(...)):
-    """Search/query memories using mem0ai client."""
+    """
+    Search/query memories using mem0 MemoryClient.
+    Expects a JSON payload with:
+      - query: string (required)
+      - user_id: string (optional)
+    """
     if not mem0_client:
-        return JSONResponse(status_code=500, content={"error": "mem0ai not installed"})
+        return JSONResponse(status_code=500, content={"error": "mem0 MemoryClient not initialized"})
     query = payload.get("query")
-    if not query:
-        return JSONResponse(status_code=400, content={"error": "Missing 'query' field"})
-    # Search memories (placeholder, actual mem0 usage may differ)
-    # This assumes mem0_client.search returns a list of matching memory objects
-    results = mem0_client.search(query)
-    return {"results": results}
+    user_id = payload.get("user_id")
+    if not query or not isinstance(query, str):
+        return JSONResponse(status_code=400, content={"error": "Missing or invalid 'query' field (must be a string)"})
+    # Search memory as per https://docs.mem0.ai/quickstart and your usage example
+    try:
+        results = mem0_client.search(query, user_id=user_id)
+        return {"results": results}
+    except Exception as e:
+        import traceback
+        print("[ERROR] Exception in /memory/search endpoint:")
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 # All endpoints are simple and testable. Extend as needed for full MCP compliance.

@@ -57,6 +57,20 @@ def delete_memory(memory_id):
         return None
 
 # Search for memories with graceful error handling
+def search_memory(query, user_id=None):
+    """
+    Search for memories by sending a query string and optional user_id.
+    """
+    try:
+        payload = {"query": query}
+        if user_id:
+            payload["user_id"] = user_id
+        resp = requests.post(f"{BASE_URL}/memory/search", json=payload, timeout=5)
+        resp.raise_for_status()
+        return resp.json()
+    except RequestException as e:
+        print(f"[ERROR] Failed to search memories: {e}")
+        return None
 def search_memory(query):
     try:
         resp = requests.post(f"{BASE_URL}/memory/search", json={"query": query}, timeout=5)
@@ -85,6 +99,9 @@ if __name__ == "__main__":
         print(f"Updating memory {memory_id}...")
         update_result = update_memory(memory_id, "updated memory text")
         print(f"Update result: {update_result}")
+        print(f"Searching for memories for user 'alex'...")
+        search_result = search_memory("What can I cook for dinner tonight?", user_id="alex")
+        print(f"Search result: {search_result}")
         print(f"Deleting memory {memory_id}...")
         delete_result = delete_memory(memory_id)
         print(f"Delete result: {delete_result}")
